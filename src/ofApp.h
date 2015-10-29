@@ -4,8 +4,12 @@
 #include "ofxVideoRecorder.h"
 
 class ofApp : public ofBaseApp{
-
-	public:
+    
+    std::vector<float> starXpoints(993);
+    std::vector<float> starYpoints(993);
+    std::vector<float> starZpoints(993);
+	
+    public:
 		void setup();
 		void update();
 		void draw();
@@ -23,6 +27,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
         void drawStar(ofPoint point);
         void drawAxes();
+    void instantiateStarCoordinates();
     
     ofVideoGrabber      vidGrabber;
     ofxVideoRecorder    vidRecorder;
@@ -40,8 +45,4 @@ class ofApp : public ofBaseApp{
         vector<ofPoint> stars;
     
         ofEasyCam cam;
-    
-    float starXpoints [993];
-    float starYpoints [993];
-    float starZpoints [993];
 };
