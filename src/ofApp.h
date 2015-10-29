@@ -21,6 +21,8 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
         void drawStar(ofPoint point);
         void drawAxes();
+    void drawGrid();
+    
     
     ofVideoGrabber      vidGrabber;
     ofxVideoRecorder    vidRecorder;

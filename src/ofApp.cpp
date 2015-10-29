@@ -72,7 +72,7 @@ void ofApp::draw(){
     
     ofSetColor(ofColor::gray);
     
-    ofDrawGrid(300.0f, 25.0f, true);
+    drawGrid();
     
     ofSetColor(ofColor::white);
     
@@ -90,6 +90,23 @@ void ofApp::drawAxes(){
     ofLine(-1000, 0, 0, 1000, 0, 0);
     ofLine(0, -1000, 0, 0, 1000, 0);
     ofLine(0, 0, -1000, 0, 0, 1000);
+}
+
+void ofApp::drawGrid(){
+    int limit = 1000;
+    
+    ofSetColor(ofColor::white, 100);
+    
+    for (int i = -limit; i <= limit; i += 20) {
+        ofLine(-limit, i, 0, limit, i, 0);
+        ofLine(i, -limit, 0, i, limit, 0);
+        
+        ofLine(-limit, 0, i, limit, 0, i);
+        ofLine(i, 0, -limit, i, 0, limit);
+        
+        ofLine(0, -limit, i, 0, limit, i);
+        ofLine(0, i, -limit, 0, i, limit);
+    }
 }
 
 void ofApp::drawStar(ofPoint point) {
