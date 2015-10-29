@@ -19,10 +19,12 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-        void drawStar(ofPoint point);
+        void drawStar(ofPoint star);
         void drawAxes();
-    void drawGrid();
+    void drawGrid(int limit);
+    void drawStarAxes(ofPoint star, int limit);
     
+    int lastStarIndex;
     
     ofVideoGrabber      vidGrabber;
     ofxVideoRecorder    vidRecorder;

@@ -20,15 +20,20 @@ void ofApp::setup(){
     
     recordPixels.allocate(ofGetWindowWidth(), ofGetWindowHeight(), OF_PIXELS_RGBA);
     
+    lastStarIndex = 0;
     stars.resize(993);
     
     for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
-        stars[i] = ofPoint(starXpoints[i]/100, starYpoints[i]/100, starZpoints[i]/100);
+        stars[i] = ofPoint(ofRandom(-50, 50), starYpoints[i]/100, starZpoints[i]/100);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    if (ofRandom(100) < 6) {
+        lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
+    }
+    
     if(bRecording){
         cout << recordPixels.size();
         recordTexture.readToPixels(recordPixels);
@@ -62,7 +67,7 @@ void ofApp::draw(){
     float angle = time * 10;
 
     ofVec3f center=ofVec3f(0,0,0);
-    cam.orbit(-angle,-20,300,center);
+    cam.orbit(-angle,-20,150,center);
     
     cam.begin();
     
@@ -70,16 +75,24 @@ void ofApp::draw(){
     
     ofPushMatrix();
     
-    ofSetColor(ofColor::gray);
+    ofSetColor(ofColor::white, 40);
     
-    drawGrid();
+    drawGrid(1000);
     
-    ofSetColor(ofColor::white);
+    ofSetColor(ofColor::white, 128);
     
-    for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
+    for (vector<ofPoint>::size_type i = 0; i < lastStarIndex; i++) {
         drawStar(stars[i]);
+        drawStarAxes(stars[i], 10000);
+        ofSetColor(ofColor::white);
         ofDrawBitmapString(starNames[i], stars[i]);
     }
+    
+    ofSetColor(ofColor::red, 200);
+    
+    drawStar(stars[lastStarIndex]);
+    drawStarAxes(stars[lastStarIndex], 10000);
+    ofDrawBitmapString(starNames[lastStarIndex], stars[lastStarIndex]);
     
     ofPopMatrix();
     
@@ -92,11 +105,7 @@ void ofApp::drawAxes(){
     ofLine(0, 0, -1000, 0, 0, 1000);
 }
 
-void ofApp::drawGrid(){
-    int limit = 1000;
-    
-    ofSetColor(ofColor::white, 100);
-    
+void ofApp::drawGrid(int limit){
     for (int i = -limit; i <= limit; i += 20) {
         ofLine(-limit, i, 0, limit, i, 0);
         ofLine(i, -limit, 0, i, limit, 0);
@@ -139,6 +148,12 @@ void ofApp::drawStar(ofPoint point) {
     
     ofPopMatrix();
     ofPopMatrix();
+}
+
+void ofApp::drawStarAxes(ofPoint star, int limit){
+    ofLine(-limit, star.y, star.z, limit, star.y, star.z);
+    ofLine(star.x, -limit, star.z, star.x, limit, star.z);
+    ofLine(star.x, star.y, -limit, star.x, star.y, limit);
 }
 
 //--------------------------------------------------------------
