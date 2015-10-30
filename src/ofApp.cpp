@@ -24,13 +24,14 @@ void ofApp::setup(){
     stars.resize(993);
     
     for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
-        stars[i] = ofPoint(ofRandom(-50, 50), starYpoints[i]/100, starZpoints[i]/100);
+        stars[i] = ofPoint(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+//        stars[i] = ofPoint(starXpoints[i]/100, starYpoints[i]/100, starZpoints[i]/100);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (ofRandom(100) < 6) {
+    if (ofRandom(100) < 4) {
         lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
     }
     
@@ -61,13 +62,14 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofEnableAlphaBlending();
     ofEnableDepthTest();
     
     float time = ofGetElapsedTimef();
     float angle = time * 10;
 
     ofVec3f center=ofVec3f(0,0,0);
-    cam.orbit(-angle,-20,150,center);
+    cam.orbit(-angle,-20,300,center);
     
     cam.begin();
     
@@ -79,12 +81,13 @@ void ofApp::draw(){
     
     drawGrid(1000);
     
-    ofSetColor(ofColor::white, 128);
+    
     
     for (vector<ofPoint>::size_type i = 0; i < lastStarIndex; i++) {
-        drawStar(stars[i]);
+        ofSetColor(ofColor::white, 10);
         drawStarAxes(stars[i], 10000);
         ofSetColor(ofColor::white);
+        drawStar(stars[i]);
         ofDrawBitmapString(starNames[i], stars[i]);
     }
     
@@ -97,6 +100,7 @@ void ofApp::draw(){
     ofPopMatrix();
     
     cam.end();
+    ofDisableAlphaBlending();
 }
 
 void ofApp::drawAxes(){
