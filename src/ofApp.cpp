@@ -31,7 +31,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (ofRandom(100) < 4) {
+    if (ofRandom(100) < 50) {
         lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
     }
     
@@ -68,8 +68,8 @@ void ofApp::draw(){
     float time = ofGetElapsedTimef();
     float angle = time * 10;
 
-    ofVec3f center=ofVec3f(0,0,0);
-    cam.orbit(-angle,-20,300,center);
+    ofVec3f center=ofVec3f(0,20,0);
+    cam.orbit(angle,-45,3000,center);
     
     cam.begin();
     
@@ -79,9 +79,7 @@ void ofApp::draw(){
     
     ofSetColor(ofColor::white, 40);
     
-    drawGrid(1000);
-    
-    
+    //drawGrid(1000);
     
     for (vector<ofPoint>::size_type i = 0; i < lastStarIndex; i++) {
         ofSetColor(ofColor::white, 10);
@@ -93,14 +91,26 @@ void ofApp::draw(){
     
     ofSetColor(ofColor::red, 200);
     
-    drawStar(stars[lastStarIndex]);
-    drawStarAxes(stars[lastStarIndex], 10000);
-    ofDrawBitmapString(starNames[lastStarIndex], stars[lastStarIndex]);
+    ofPoint lastStar = stars[lastStarIndex];
+    
+    drawStar(lastStar);
+    drawStarAxes(lastStar, 10000);
+    ofDrawBitmapString(starNames[lastStarIndex], lastStar);
     
     ofPopMatrix();
     
+    ofVec2f lastStarProjectedCoords = getProjectedCoords(lastStar.x, lastStar.y, lastStar.z, cam);
+    ofSetColor(ofColor::white);
+    ofLine(lastStarProjectedCoords.x, lastStarProjectedCoords.y, ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
+    
     cam.end();
     ofDisableAlphaBlending();
+    
+    ofDisableDepthTest();
+    
+    
+    ofDrawBitmapString(ofToString(ofGetFrameRate()), ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
+//    ofDrawBitmapString(ofToString(cam.getNearClip()), ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
 }
 
 void ofApp::drawAxes(){
@@ -158,6 +168,13 @@ void ofApp::drawStarAxes(ofPoint star, int limit){
     ofLine(-limit, star.y, star.z, limit, star.y, star.z);
     ofLine(star.x, -limit, star.z, star.x, limit, star.z);
     ofLine(star.x, star.y, -limit, star.x, star.y, limit);
+}
+
+ofVec2f ofApp::getProjectedCoords(float x, float y, float z, ofEasyCam cam) {
+    float projected_x = cam.getX() + ((cam.getNearClip()-cam.getZ())*(x-cam.getX()))/(z-cam.getZ());
+    float projected_y = cam.getY() + ((cam.getNearClip()-cam.getZ())*(y-cam.getY()))/(z-cam.getZ());
+    
+    return ofVec2f(projected_x, projected_y);
 }
 
 //--------------------------------------------------------------
