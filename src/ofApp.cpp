@@ -31,7 +31,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (ofRandom(100) < 50) {
+    if (ofRandom(100) < 1) {
         lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
     }
     
@@ -68,25 +68,30 @@ void ofApp::draw(){
     float time = ofGetElapsedTimef();
     float angle = time * 10;
 
-    ofVec3f center=ofVec3f(0,20,0);
-    cam.orbit(angle,-45,3000,center);
+    ofVec3f center=ofVec3f(0,0,0);
     
     cam.begin();
     
-    ofSetColor(ofColor::white);
-    
     ofPushMatrix();
+    
+    ofTranslate(1000,1000,1000);
+    
+    ofDrawGrid(4000, 10, true);
     
     ofSetColor(ofColor::white, 40);
     
-    //drawGrid(1000);
-    
     for (vector<ofPoint>::size_type i = 0; i < lastStarIndex; i++) {
-        ofSetColor(ofColor::white, 10);
+        ofVec3f star = stars[i];
+        
+        ofPushMatrix();
+    
+        ofTranslate(star.x, star.y, star.z);
+        
         drawStarAxes(stars[i], 10000);
-        ofSetColor(ofColor::white);
         drawStar(stars[i]);
         ofDrawBitmapString(starNames[i], stars[i]);
+        
+        ofPopMatrix();
     }
     
     ofSetColor(ofColor::red, 200);
@@ -99,11 +104,14 @@ void ofApp::draw(){
     
     ofPopMatrix();
     
-    ofVec2f lastStarProjectedCoords = getProjectedCoords(lastStar.x, lastStar.y, lastStar.z, cam);
-    ofSetColor(ofColor::white);
-    ofLine(lastStarProjectedCoords.x, lastStarProjectedCoords.y, ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
+//    ofVec2f lastStarProjectedCoords = getProjectedCoords(lastStar.x, lastStar.y, lastStar.z, cam);
+//    ofSetColor(ofColor::white);
+//    ofLine(lastStarProjectedCoords.x, lastStarProjectedCoords.y, ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
+//    ofDrawBitmapString(ofToString(lastStarProjectedCoords.x), 100, 100);
+//    ofDrawBitmapString(ofToString(lastStarProjectedCoords.y), 100, 130);
     
     cam.end();
+    
     ofDisableAlphaBlending();
     
     ofDisableDepthTest();
@@ -133,6 +141,9 @@ void ofApp::drawGrid(int limit){
 }
 
 void ofApp::drawStar(ofPoint point) {
+    ofPushStyle();
+    ofSetColor(ofColor::white);
+    
     float diameter = 2;
     float radius = diameter / 2;
     
@@ -162,12 +173,16 @@ void ofApp::drawStar(ofPoint point) {
     
     ofPopMatrix();
     ofPopMatrix();
+    ofPopStyle();
 }
 
 void ofApp::drawStarAxes(ofPoint star, int limit){
+    ofPushStyle();
+    ofSetColor(ofColor::white, 10);
     ofLine(-limit, star.y, star.z, limit, star.y, star.z);
     ofLine(star.x, -limit, star.z, star.x, limit, star.z);
     ofLine(star.x, star.y, -limit, star.x, star.y, limit);
+    ofPopStyle();
 }
 
 ofVec2f ofApp::getProjectedCoords(float x, float y, float z, ofEasyCam cam) {
