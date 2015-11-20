@@ -19,11 +19,12 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-        void drawStar(ofPoint star);
+        void drawStar(ofNode star);
         void drawAxes();
     void drawGrid(int limit);
-    void drawStarAxes(ofPoint star, int limit);
+    void drawStarAxes(ofNode star, int limit);
     ofVec2f getProjectedCoords(float x, float y, float z, ofEasyCam cam);
+    ofVec3f translationPoint;
     
     int lastStarIndex;
     
@@ -40,7 +41,7 @@ class ofApp : public ofBaseApp{
     ofPixels recordPixels;
     ofTexture recordTexture;
     
-        vector<ofPoint> stars;
+        vector<ofNode> stars;
     
         ofEasyCam cam;
     

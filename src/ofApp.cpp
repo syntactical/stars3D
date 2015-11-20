@@ -24,7 +24,10 @@ void ofApp::setup(){
     stars.resize(993);
     
     for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
-        stars[i] = ofPoint(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+        
+        stars[i] = ofNode();
+        stars[i].setPosition(position);
 //        stars[i] = ofPoint(starXpoints[i]/100, starYpoints[i]/100, starZpoints[i]/100);
     }
 }
@@ -33,6 +36,8 @@ void ofApp::setup(){
 void ofApp::update(){
     if (ofRandom(100) < 1) {
         lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
+        
+        
     }
     
     if(bRecording){
@@ -68,63 +73,80 @@ void ofApp::draw(){
     float time = ofGetElapsedTimef();
     float angle = time * 10;
 
-    ofVec3f center=ofVec3f(0,0,0);
-    
     cam.begin();
+    
+    translationPoint = ofVec3f(-100,-100,-100);
     
     ofPushMatrix();
     
-    ofTranslate(1000,1000,1000);
+//    ofRotateX(45);
+//    ofRotateY(-angle);
     
-    ofDrawGrid(4000, 10, true);
+//    ofDrawGrid(4000, 10, true);
+    
+    ofDrawAxis(1000);
     
     ofSetColor(ofColor::white, 40);
     
-    for (vector<ofPoint>::size_type i = 0; i < lastStarIndex; i++) {
-        ofVec3f star = stars[i];
+    for (vector<ofNode>::size_type i = 0; i < lastStarIndex; i++) {
+        ofNode star = stars[i];
         
         ofPushMatrix();
     
-        ofTranslate(star.x, star.y, star.z);
+        ofTranslate(star.getPosition());
         
         drawStarAxes(stars[i], 10000);
         drawStar(stars[i]);
-        ofDrawBitmapString(starNames[i], stars[i]);
+        ofDrawBitmapString(starNames[i], stars[i].getPosition());
         
         ofPopMatrix();
     }
     
+    ofVec3f constantPoint = cam.screenToWorld(ofVec3f(600, 600, 0));
+    
     ofSetColor(ofColor::red, 200);
     
-    ofPoint lastStar = stars[lastStarIndex];
+    ofNode lastStar = stars[lastStarIndex];
+    
+    //ofDrawGridPlane(400);
     
     drawStar(lastStar);
     drawStarAxes(lastStar, 10000);
-    ofDrawBitmapString(starNames[lastStarIndex], lastStar);
-    
+    ofDrawBitmapString(starNames[lastStarIndex], lastStar.getPosition());
     ofPopMatrix();
-    
-//    ofVec2f lastStarProjectedCoords = getProjectedCoords(lastStar.x, lastStar.y, lastStar.z, cam);
-//    ofSetColor(ofColor::white);
-//    ofLine(lastStarProjectedCoords.x, lastStarProjectedCoords.y, ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
-//    ofDrawBitmapString(ofToString(lastStarProjectedCoords.x), 100, 100);
-//    ofDrawBitmapString(ofToString(lastStarProjectedCoords.y), 100, 130);
-    
     cam.end();
     
+//    ofNode hjisaojodsa
+    
+    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getGlobalPosition() * lastStar.getGlobalTransformMatrix());
+    ofVec3f pr = cam.worldToScreen(stars[lastStarIndex].getPosition());
+    ofLine(projectedStarCoords.x, projectedStarCoords.y, 700, 700);
+    
+    ofDrawBitmapString("projected coords", 100,80);
+    
+    ofDrawBitmapString(ofToString(pr.x), 100,100);
+    ofDrawBitmapString(ofToString(pr.y), 100,125);
+    ofDrawBitmapString(ofToString(pr.z), 100,150);
+    
+    ofDrawBitmapString("actual coords", 250,80);
+    ofDrawBitmapString(ofToString(lastStar.getX()), 250,100);
+    ofDrawBitmapString(ofToString(lastStar.getY()), 250,125);
+    ofDrawBitmapString(ofToString(lastStar.getZ()), 250,150);
+    
+    ofDrawBitmapString(starNames[lastStarIndex], 100, 50);
+    
+    
     ofDisableAlphaBlending();
-    
     ofDisableDepthTest();
-    
-    
-    ofDrawBitmapString(ofToString(ofGetFrameRate()), ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
-//    ofDrawBitmapString(ofToString(cam.getNearClip()), ofGetWindowWidth() - 100, ofGetWindowHeight() - 100);
 }
 
 void ofApp::drawAxes(){
+    ofPushStyle();
+    ofSetColor(ofColor::white, 100);
     ofLine(-1000, 0, 0, 1000, 0, 0);
     ofLine(0, -1000, 0, 0, 1000, 0);
     ofLine(0, 0, -1000, 0, 0, 1000);
+    ofPopStyle();
 }
 
 void ofApp::drawGrid(int limit){
@@ -140,7 +162,7 @@ void ofApp::drawGrid(int limit){
     }
 }
 
-void ofApp::drawStar(ofPoint point) {
+void ofApp::drawStar(ofNode node) {
     ofPushStyle();
     ofSetColor(ofColor::white);
     
@@ -149,7 +171,7 @@ void ofApp::drawStar(ofPoint point) {
     
     ofPushMatrix();
     
-    ofTranslate(point.x, point.y, point.z);
+    ofTranslate(node.getX(), node.getY(), node.getZ());
     
     ofLine(-diameter, 0, 0, diameter, 0, 0);
     ofLine(0, -diameter, 0, 0, diameter, 0);
@@ -176,18 +198,18 @@ void ofApp::drawStar(ofPoint point) {
     ofPopStyle();
 }
 
-void ofApp::drawStarAxes(ofPoint star, int limit){
-    ofPushStyle();
-    ofSetColor(ofColor::white, 10);
-    ofLine(-limit, star.y, star.z, limit, star.y, star.z);
-    ofLine(star.x, -limit, star.z, star.x, limit, star.z);
-    ofLine(star.x, star.y, -limit, star.x, star.y, limit);
-    ofPopStyle();
+void ofApp::drawStarAxes(ofNode star, int limit){
+//    ofPushStyle();
+//    ofSetColor(ofColor::white);
+//    ofLine(-limit, star.y, star.z, limit, star.y, star.z);
+//    ofLine(star.x, -limit, star.z, star.x, limit, star.z);
+//    ofLine(star.x, star.y, -limit, star.x, star.y, limit);
+//    ofPopStyle();
 }
 
 ofVec2f ofApp::getProjectedCoords(float x, float y, float z, ofEasyCam cam) {
-    float projected_x = cam.getX() + ((cam.getNearClip()-cam.getZ())*(x-cam.getX()))/(z-cam.getZ());
-    float projected_y = cam.getY() + ((cam.getNearClip()-cam.getZ())*(y-cam.getY()))/(z-cam.getZ());
+    float projected_x = translationPoint.x + ((cam.getNearClip()-translationPoint.z)*(x-translationPoint.x))/(z-translationPoint.z);
+    float projected_y = translationPoint.y + ((cam.getNearClip()-translationPoint.z)*(y-translationPoint.y))/(z-translationPoint.z);
     
     return ofVec2f(projected_x, projected_y);
 }
