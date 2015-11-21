@@ -23,7 +23,6 @@ class ofApp : public ofBaseApp{
         void drawAxes();
     void drawGrid(int limit);
     void drawStarAxes(ofNode star, int limit);
-    ofVec2f getProjectedCoords(float x, float y, float z, ofEasyCam cam);
     ofVec3f translationPoint;
     
     int lastStarIndex;

@@ -24,7 +24,8 @@ void ofApp::setup(){
     stars.resize(993);
     
     for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
-        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+//        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+        ofVec3f position = ofVec3f(i * 20 + 30,i * 20 + 5,0);
         
         stars[i] = ofNode();
         stars[i].setPosition(position);
@@ -34,8 +35,8 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if (ofRandom(100) < 1) {
-        lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
+    if (ofRandom(100) < 5) {
+//        lastStarIndex = ofClamp(lastStarIndex + 1, 0, 3);
     }
     
     if(bRecording){
@@ -91,9 +92,9 @@ void ofApp::draw(){
     
         ofTranslate(star.getPosition());
         
-        drawStarAxes(stars[i], 10000);
-        drawStar(stars[i]);
-        ofDrawBitmapString(starNames[i], stars[i].getPosition());
+        drawStarAxes(star, 10000);
+        drawStar(star);
+        ofDrawBitmapString(starNames[i], star.getPosition());
         
         ofPopMatrix();
     }
@@ -103,14 +104,15 @@ void ofApp::draw(){
     ofSetColor(ofColor::red, 200);
     
     ofNode lastStar = stars[lastStarIndex];
-    cout << starNames[lastStarIndex];
     
     //ofDrawGridPlane(400);
     
+    ofPushMatrix();
+    ofTranslate(lastStar.getPosition());
     drawStar(lastStar);
     drawStarAxes(lastStar, 10000);
     ofDrawBitmapString(starNames[lastStarIndex], lastStar.getPosition());
-
+    ofPopMatrix();
     
     
     
@@ -128,7 +130,6 @@ void ofApp::draw(){
     
     cam.end();
     
-        cout << starNames[lastStarIndex];
     ofLine(projectedStarCoords.x, projectedStarCoords.y, 700, 700);
     
     ofDrawBitmapString("projected coords", 100,80);
@@ -210,13 +211,6 @@ void ofApp::drawStarAxes(ofNode star, int limit){
     ofPopStyle();
 }
 
-ofVec2f ofApp::getProjectedCoords(float x, float y, float z, ofEasyCam cam) {
-    float projected_x = translationPoint.x + ((cam.getNearClip()-translationPoint.z)*(x-translationPoint.x))/(z-translationPoint.z);
-    float projected_y = translationPoint.y + ((cam.getNearClip()-translationPoint.z)*(y-translationPoint.y))/(z-translationPoint.z);
-    
-    return ofVec2f(projected_x, projected_y);
-}
-
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
@@ -224,6 +218,11 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+    if(key=='n') {
+        lastStarIndex = ofClamp(lastStarIndex + 1, 0, 900);
+        cout << starNames[lastStarIndex];
+    }
+    
     if(key=='r'){
         bRecording = !bRecording;
         if(bRecording && !vidRecorder.isInitialized()) {
