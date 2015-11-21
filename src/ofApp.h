@@ -21,6 +21,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
         void drawStar(ofNode star);
         void drawAxes();
+    void drawStarAndAxes(ofNode star);
     void drawGrid(int limit);
     void drawStarAxes(ofNode star, int limit);
     ofVec3f translationPoint;

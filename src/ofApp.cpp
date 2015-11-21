@@ -24,8 +24,8 @@ void ofApp::setup(){
     stars.resize(993);
     
     for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
-//        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
-        ofVec3f position = ofVec3f(i * 20 + 30,i * 20 + 5,0);
+        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+//        ofVec3f position = ofVec3f(i * 20 + 30,i * 20 + 5,0);
         
         stars[i] = ofNode();
         stars[i].setPosition(position);
@@ -88,43 +88,37 @@ void ofApp::draw(){
     for (vector<ofNode>::size_type i = 0; i < lastStarIndex; i++) {
         ofNode star = stars[i];
         
-        ofPushMatrix();
-    
-        ofTranslate(star.getPosition());
+        ofPushStyle();
+        ofSetColor(ofColor::white, 200);
         
-        drawStarAxes(star, 10000);
-        drawStar(star);
+        drawStarAndAxes(star);
         ofDrawBitmapString(starNames[i], star.getPosition());
         
-        ofPopMatrix();
+        ofPopStyle();
     }
     
-    ofVec3f constantPoint = cam.screenToWorld(ofVec3f(600, 600, 0));
-    
-    ofSetColor(ofColor::red, 200);
     
     ofNode lastStar = stars[lastStarIndex];
     
-    //ofDrawGridPlane(400);
     
-    ofPushMatrix();
-    ofTranslate(lastStar.getPosition());
-    drawStar(lastStar);
-    drawStarAxes(lastStar, 10000);
+    ofPushStyle();
+    
+    ofSetColor(ofColor::red);
+    
+    drawStarAndAxes(lastStar);
     ofDrawBitmapString(starNames[lastStarIndex], lastStar.getPosition());
-    ofPopMatrix();
     
+    ofPopStyle();
     
+//    ofVec3f constantPoint = cam.screenToWorld(ofVec3f(600, 600, 0));
     
-    
+    //ofDrawGridPlane(400);
+
     
 //    ofPopMatrix();
     
     
-    
-    
-    
-    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition() * lastStar.getGlobalTransformMatrix());
+    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition()); // * lastStar.getGlobalTransformMatrix());
     ofVec3f pr = cam.worldToScreen(stars[lastStarIndex].getPosition());
 
     
@@ -171,16 +165,20 @@ void ofApp::drawGrid(int limit){
     }
 }
 
+void ofApp::drawStarAndAxes(ofNode star) {
+    ofPushMatrix();
+    ofTranslate(star.getPosition());
+    drawStar(star);
+    drawStarAxes(star, 1000);
+    ofPopMatrix();
+}
+
 void ofApp::drawStar(ofNode node) {
     ofPushStyle();
     ofSetColor(ofColor::white);
     
     float diameter = 2;
     float radius = diameter / 2;
-    
-    ofPushMatrix();
-    
-    ofTranslate(node.getX(), node.getY(), node.getZ());
     
     ofLine(-diameter, 0, 0, diameter, 0, 0);
     ofLine(0, -diameter, 0, 0, diameter, 0);
@@ -198,16 +196,15 @@ void ofApp::drawStar(ofNode node) {
     ofCircle(0, 0, 0, radius);
     ofPopMatrix();
     
-    ofPopMatrix();
     ofPopStyle();
 }
 
 void ofApp::drawStarAxes(ofNode star, int limit){
     ofPushStyle();
     ofSetColor(ofColor::white, 40);
-    ofLine(-limit, star.getY(), star.getZ(), limit, star.getY(), star.getZ());
-    ofLine(star.getX(), -limit, star.getZ(), star.getX(), limit, star.getZ());
-    ofLine(star.getX(), star.getY(), -limit, star.getX(), star.getY(), limit);
+    ofLine(-limit, 0, 0, limit, 0, 0);
+    ofLine(0, -limit, 0, 0, limit, 0);
+    ofLine(0, 0, -limit, 0, 0, limit);
     ofPopStyle();
 }
 
