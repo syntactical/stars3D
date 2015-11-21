@@ -36,8 +36,6 @@ void ofApp::setup(){
 void ofApp::update(){
     if (ofRandom(100) < 1) {
         lastStarIndex = ofClamp(lastStarIndex + 1, 0, 992);
-        
-        
     }
     
     if(bRecording){
@@ -75,9 +73,9 @@ void ofApp::draw(){
 
     cam.begin();
     
-    translationPoint = ofVec3f(-100,-100,-100);
-    
-    ofPushMatrix();
+//    translationPoint = ofVec3f(-100,-100,-100);
+//    
+//    ofPushMatrix();
     
 //    ofRotateX(45);
 //    ofRotateY(-angle);
@@ -85,8 +83,6 @@ void ofApp::draw(){
 //    ofDrawGrid(4000, 10, true);
     
     ofDrawAxis(1000);
-    
-    ofSetColor(ofColor::white, 40);
     
     for (vector<ofNode>::size_type i = 0; i < lastStarIndex; i++) {
         ofNode star = stars[i];
@@ -107,19 +103,32 @@ void ofApp::draw(){
     ofSetColor(ofColor::red, 200);
     
     ofNode lastStar = stars[lastStarIndex];
+    cout << starNames[lastStarIndex];
     
     //ofDrawGridPlane(400);
     
     drawStar(lastStar);
     drawStarAxes(lastStar, 10000);
     ofDrawBitmapString(starNames[lastStarIndex], lastStar.getPosition());
-    ofPopMatrix();
+
+    
+    
+    
+    
+    
+//    ofPopMatrix();
+    
+    
+    
+    
+    
+    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition() * lastStar.getGlobalTransformMatrix());
+    ofVec3f pr = cam.worldToScreen(stars[lastStarIndex].getPosition());
+
+    
     cam.end();
     
-//    ofNode hjisaojodsa
-    
-    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getGlobalPosition() * lastStar.getGlobalTransformMatrix());
-    ofVec3f pr = cam.worldToScreen(stars[lastStarIndex].getPosition());
+        cout << starNames[lastStarIndex];
     ofLine(projectedStarCoords.x, projectedStarCoords.y, 700, 700);
     
     ofDrawBitmapString("projected coords", 100,80);
@@ -134,7 +143,6 @@ void ofApp::draw(){
     ofDrawBitmapString(ofToString(lastStar.getZ()), 250,150);
     
     ofDrawBitmapString(starNames[lastStarIndex], 100, 50);
-    
     
     ofDisableAlphaBlending();
     ofDisableDepthTest();
@@ -180,31 +188,26 @@ void ofApp::drawStar(ofNode node) {
     ofCircle(0, 0, 0, radius);
     
     ofPushMatrix();
-    
     ofRotateY(90);
-    
-    //ofCircle(0, 0, 0, radius);
-    
+    ofCircle(0, 0, 0, radius);
     ofPopMatrix();
     
     ofPushMatrix();
-    
     ofRotateZ(90);
-    
-    //ofCircle(0, 0, 0, radius);
-    
+    ofCircle(0, 0, 0, radius);
     ofPopMatrix();
+    
     ofPopMatrix();
     ofPopStyle();
 }
 
 void ofApp::drawStarAxes(ofNode star, int limit){
-//    ofPushStyle();
-//    ofSetColor(ofColor::white);
-//    ofLine(-limit, star.y, star.z, limit, star.y, star.z);
-//    ofLine(star.x, -limit, star.z, star.x, limit, star.z);
-//    ofLine(star.x, star.y, -limit, star.x, star.y, limit);
-//    ofPopStyle();
+    ofPushStyle();
+    ofSetColor(ofColor::white, 40);
+    ofLine(-limit, star.getY(), star.getZ(), limit, star.getY(), star.getZ());
+    ofLine(star.getX(), -limit, star.getZ(), star.getX(), limit, star.getZ());
+    ofLine(star.getX(), star.getY(), -limit, star.getX(), star.getY(), limit);
+    ofPopStyle();
 }
 
 ofVec2f ofApp::getProjectedCoords(float x, float y, float z, ofEasyCam cam) {
