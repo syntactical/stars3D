@@ -23,10 +23,12 @@ void ofApp::setup(){
     lastStarIndex = 0;
     stars.resize(993);
     
+    /*ofNode star;*/
     for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
         ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
 //        ofVec3f position = ofVec3f(i * 20 + 30,i * 20 + 5,0);
-        
+        /*star.setPosition(position);
+        stars.push_back(star);*/
         stars[i] = ofNode();
         stars[i].setPosition(position);
 //        stars[i] = ofPoint(starXpoints[i]/100, starYpoints[i]/100, starZpoints[i]/100);
@@ -72,14 +74,25 @@ void ofApp::draw(){
     float time = ofGetElapsedTimef();
     float angle = time * 10;
 
+    
+//    ofRotateY(-angle);
+    
     cam.begin();
     
-//    translationPoint = ofVec3f(-100,-100,-100);
+    if (ofGetFrameNum() == 0) {
+        cam.rotate(45, ofVec3f(1,0,0));
+//        cam.rotate(45, ofVec3f(0,1,0));
+    }
+    
+    //cam.rotate(
+    
+    //    ofRotateX(45);
+//    translationPoint = ofVec3f    (-100,-100,-100);
 //    
 //    ofPushMatrix();
     
-//    ofRotateX(45);
-//    ofRotateY(-angle);
+    
+
     
 //    ofDrawGrid(4000, 10, true);
     
@@ -118,9 +131,11 @@ void ofApp::draw(){
 //    ofPopMatrix();
     
     
-    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition()); // * lastStar.getGlobalTransformMatrix());
+    //ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition() * lastStar.getLocalTransformMatrix());
+    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition());
     ofVec3f pr = cam.worldToScreen(stars[lastStarIndex].getPosition());
 
+    
     
     cam.end();
     
@@ -141,6 +156,7 @@ void ofApp::draw(){
     
     ofDisableAlphaBlending();
     ofDisableDepthTest();
+    
 }
 
 void ofApp::drawAxes(){
