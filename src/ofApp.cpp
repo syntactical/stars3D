@@ -1,5 +1,5 @@
 #include "ofApp.h"
-
+#define NUMBER_OF_STARS 993
 //--------------------------------------------------------------
 
 void ofApp::setup(){
@@ -10,60 +10,25 @@ void ofApp::setup(){
     
     ofSetFrameRate(60);
     
-    fileName = "testMovie";
-    fileExt = ".mov";
-    
-    vidRecorder.setVideoCodec("mpeg4");
-    vidRecorder.setVideoBitrate("800k");
-    
-    bRecording = false;
-    
-    recordPixels.allocate(ofGetWindowWidth(), ofGetWindowHeight(), OF_PIXELS_RGBA);
+    for (vector<ofPoint>::size_type i = 0; i < NUMBER_OF_STARS; i++) {
+        ofNode star;
+        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
+        star.setPosition(position);
+        stars.push_back(star);
+    }
     
     lastStarIndex = 0;
-    stars.resize(993);
-    
-    /*ofNode star;*/
-    for (vector<ofPoint>::size_type i = 0; i < stars.size(); i++) {
-        ofVec3f position = ofVec3f(ofRandom(-100,100),ofRandom(-100,100),ofRandom(-100,100));
-//        ofVec3f position = ofVec3f(i * 20 + 30,i * 20 + 5,0);
-        /*star.setPosition(position);
-        stars.push_back(star);*/
-        stars[i] = ofNode();
-        stars[i].setPosition(position);
-//        stars[i] = ofPoint(starXpoints[i]/100, starYpoints[i]/100, starZpoints[i]/100);
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     if (ofRandom(100) < 5) {
-//        lastStarIndex = ofClamp(lastStarIndex + 1, 0, 3);
-    }
-    
-    if(bRecording){
-        cout << recordPixels.size();
-        recordTexture.readToPixels(recordPixels);
-        
-        cout << recordPixels.size();
-        bool success = vidRecorder.addFrame(recordPixels);
-        if (!success) {
-            ofLogWarning("This frame was not added!");
-        }
-    }
-    
-    // Check if the video recorder encountered any error while writing video frame or audio smaples.
-    if (vidRecorder.hasVideoError()) {
-        ofLogWarning("The video recorder failed to write some frames!");
-    }
-    
-    if (vidRecorder.hasAudioError()) {
-        ofLogWarning("The video recorder failed to write some audio samples!");
+        lastStarIndex = ofClamp(lastStarIndex + 1, 0, NUMBER_OF_STARS - 1);
     }
 }
 
 void ofApp::exit() {
-    vidRecorder.close();
+    
 }
 
 //--------------------------------------------------------------
@@ -73,35 +38,20 @@ void ofApp::draw(){
     
     float time = ofGetElapsedTimef();
     float angle = time * 10;
-
-    
-//    ofRotateY(-angle);
     
     cam.begin();
     
     if (ofGetFrameNum() == 0) {
         cam.rotate(45, ofVec3f(1,0,0));
-//        cam.rotate(45, ofVec3f(0,1,0));
     }
     
-    //cam.rotate(
-    
-    //    ofRotateX(45);
-//    translationPoint = ofVec3f    (-100,-100,-100);
-//    
-//    ofPushMatrix();
-    
-    
-
-    
-//    ofDrawGrid(4000, 10, true);
-    
-    ofDrawAxis(1000);
+    ofDrawGrid(4000, 10, true);
     
     for (vector<ofNode>::size_type i = 0; i < lastStarIndex; i++) {
         ofNode star = stars[i];
         
         ofPushStyle();
+        
         ofSetColor(ofColor::white, 200);
         
         drawStarAndAxes(star);
@@ -110,9 +60,7 @@ void ofApp::draw(){
         ofPopStyle();
     }
     
-    
     ofNode lastStar = stars[lastStarIndex];
-    
     
     ofPushStyle();
     
@@ -123,29 +71,17 @@ void ofApp::draw(){
     
     ofPopStyle();
     
-//    ofVec3f constantPoint = cam.screenToWorld(ofVec3f(600, 600, 0));
-    
-    //ofDrawGridPlane(400);
-
-    
-//    ofPopMatrix();
-    
-    
-    //ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition() * lastStar.getLocalTransformMatrix());
     ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition());
-    ofVec3f pr = cam.worldToScreen(stars[lastStarIndex].getPosition());
 
-    
-    
     cam.end();
     
     ofLine(projectedStarCoords.x, projectedStarCoords.y, 700, 700);
     
     ofDrawBitmapString("projected coords", 100,80);
     
-    ofDrawBitmapString(ofToString(pr.x), 100,100);
-    ofDrawBitmapString(ofToString(pr.y), 100,125);
-    ofDrawBitmapString(ofToString(pr.z), 100,150);
+    ofDrawBitmapString(ofToString(projectedStarCoords.x), 100,100);
+    ofDrawBitmapString(ofToString(projectedStarCoords.y), 100,125);
+    ofDrawBitmapString(ofToString(projectedStarCoords.z), 100,150);
     
     ofDrawBitmapString("actual coords", 250,80);
     ofDrawBitmapString(ofToString(lastStar.getX()), 250,100);
@@ -231,11 +167,7 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    if(key=='n') {
-        lastStarIndex = ofClamp(lastStarIndex + 1, 0, 900);
-        cout << starNames[lastStarIndex];
-    }
-    
+    /*
     if(key=='r'){
         bRecording = !bRecording;
         if(bRecording && !vidRecorder.isInitialized()) {
@@ -258,6 +190,7 @@ void ofApp::keyReleased(int key){
         bRecording = false;
         vidRecorder.close();
     }
+    */
 }
 
 //--------------------------------------------------------------
