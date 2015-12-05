@@ -24,6 +24,7 @@ class ofApp : public ofBaseApp{
     void drawStarAndAxes(ofNode star);
     void drawGrid(int limit);
     void drawStarAxes(ofNode star, int limit);
+    void drawStarDiagnostics(ofVec2f startPoint, ofNode star, string starName);
     ofVec3f translationPoint;
     
     int lastStarIndex;

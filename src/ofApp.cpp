@@ -40,12 +40,8 @@ void ofApp::draw(){
     float angle = time * 10;
     
     cam.begin();
-    
-    if (ofGetFrameNum() == 0) {
-        cam.rotate(45, ofVec3f(1,0,0));
-    }
-    
-    ofDrawGrid(4000, 10, true);
+   
+    cam.orbit(angle, -20, 300);
     
     for (vector<ofNode>::size_type i = 0; i < lastStarIndex; i++) {
         ofNode star = stars[i];
@@ -67,32 +63,15 @@ void ofApp::draw(){
     ofSetColor(ofColor::red);
     
     drawStarAndAxes(lastStar);
-    ofDrawBitmapString(starNames[lastStarIndex], lastStar.getPosition());
     
     ofPopStyle();
-    
-    ofVec3f projectedStarCoords = cam.worldToScreen(lastStar.getPosition());
 
     cam.end();
     
-    ofLine(projectedStarCoords.x, projectedStarCoords.y, 700, 700);
-    
-    ofDrawBitmapString("projected coords", 100,80);
-    
-    ofDrawBitmapString(ofToString(projectedStarCoords.x), 100,100);
-    ofDrawBitmapString(ofToString(projectedStarCoords.y), 100,125);
-    ofDrawBitmapString(ofToString(projectedStarCoords.z), 100,150);
-    
-    ofDrawBitmapString("actual coords", 250,80);
-    ofDrawBitmapString(ofToString(lastStar.getX()), 250,100);
-    ofDrawBitmapString(ofToString(lastStar.getY()), 250,125);
-    ofDrawBitmapString(ofToString(lastStar.getZ()), 250,150);
-    
-    ofDrawBitmapString(starNames[lastStarIndex], 100, 50);
+    drawStarDiagnostics(ofVec2f(ofGetWidth()-300, ofGetHeight() -150), lastStar, starNames[lastStarIndex]);
     
     ofDisableAlphaBlending();
     ofDisableDepthTest();
-    
 }
 
 void ofApp::drawAxes(){
@@ -158,6 +137,36 @@ void ofApp::drawStarAxes(ofNode star, int limit){
     ofLine(0, -limit, 0, 0, limit, 0);
     ofLine(0, 0, -limit, 0, 0, limit);
     ofPopStyle();
+}
+
+void ofApp::drawStarDiagnostics(ofVec2f startPoint, ofNode star, string starName){
+    
+    
+    ofVec3f projectedStarCoords = cam.worldToScreen(star.getPosition());
+    
+    ofLine(projectedStarCoords.x, projectedStarCoords.y, startPoint.x, startPoint.y);
+    
+    
+    ofPushMatrix();
+    ofTranslate(startPoint);
+    
+    ofPushStyle();
+    ofSetColor(ofColor::red);
+    ofDrawBitmapString(starNames[lastStarIndex], 2, 5);
+    ofPopStyle();
+    
+    ofDrawBitmapString("projected coords", 10,30);
+    
+    ofDrawBitmapString(ofToString(projectedStarCoords.x), 10,60);
+    ofDrawBitmapString(ofToString(projectedStarCoords.y), 10,80);
+    ofDrawBitmapString(ofToString(projectedStarCoords.z), 10,100);
+    
+    ofDrawBitmapString("actual coords", 180,30);
+    ofDrawBitmapString(ofToString(star.getX()), 180,60);
+    ofDrawBitmapString(ofToString(star.getY()), 180,80);
+    ofDrawBitmapString(ofToString(star.getZ()), 180,100);
+    
+    ofPopMatrix();
 }
 
 //--------------------------------------------------------------
