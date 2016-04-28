@@ -62,7 +62,7 @@ void ofApp::draw(){
     float angle = time * 10;
 
     ofVec3f center=ofVec3f(0,0,0);
-    cam.orbit(-angle,-20,300,center);
+    cam.orbit(-angle/3,-20,4000,center);
     
     cam.begin();
     
@@ -72,7 +72,7 @@ void ofApp::draw(){
     
     ofSetColor(ofColor::gray);
     
-    drawGrid();
+    drawGrid(fmod(ofGetElapsedTimef()* 400, 80000) - 500);
     
     ofSetColor(ofColor::white);
     
@@ -92,20 +92,20 @@ void ofApp::drawAxes(){
     ofLine(0, 0, -1000, 0, 0, 1000);
 }
 
-void ofApp::drawGrid(){
+void ofApp::drawGrid(float pos){
     int limit = 1000;
     
     ofSetColor(ofColor::white, 100);
     
     for (int i = -limit; i <= limit; i += 20) {
-        ofLine(-limit, i, 0, limit, i, 0);
-        ofLine(i, -limit, 0, i, limit, 0);
+        ofLine(-pos, i, -pos, limit, i, pos);
+        ofLine(i, -1/pos, sin(pos), i, pos/40, pos / i);
         
-        ofLine(-limit, 0, i, limit, 0, i);
-        ofLine(i, 0, -limit, i, 0, limit);
+        ofLine(-limit, tan(i), i, limit, 0, i);
+        ofLine(i-limit, tan(pos), -limit, i, pos, pos);
         
-        ofLine(0, -limit, i, 0, limit, i);
-        ofLine(0, i, -limit, 0, i, limit);
+        ofLine(1/pos + limit, -limit, pos/i, cos(i), limit, pos * i);
+        ofLine(pos*3, i* limit, -limit, pos, i*pos, limit/(i+1));
     }
 }
 
